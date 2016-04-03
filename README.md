@@ -52,3 +52,18 @@ When this file is passed to the sudoku program it spits out the following:
 
 The puzzle is echoed in a familiar form, followed by its solution. This puzzle
 and other examples can be found in the puzzles directory.
+
+The command line syntax for the program is:
+
+    usage: sudoku [-h] [-r] [-t] [-v] puzzle
+
+    Sudoku puzzle solver.
+
+    positional arguments:
+      puzzle           puzzle file
+
+    optional arguments:
+      -h, --help       show this help message and exit
+      -r, --rating     provide difficulty rating of puzzle
+      -t, --traceback  display call stack when exceptions are raised
+      -v, --verbose    run in verbose mode, show solution progress
