@@ -3,9 +3,6 @@ lib.solver
 Solver class definition.
 """
 
-# system imports
-import sys
-
 # project imports
 from lib.board import Board
 
@@ -23,7 +20,7 @@ class Solver(object):
     Class that implements backtrack. See the backtrack method for details.
     """
 
-    def __init__(self, puzzle, verbose=False, rating=False):
+    def __init__(self, puzzle):
         """
         Constructor for the Solver class. The key members of this class are:
           finished: Flag to track if solution is found.
@@ -34,8 +31,6 @@ class Solver(object):
         """
         self.iteration = 0
         self.finished = False
-        self.verbose = verbose
-        self.rating = rating
         self.board = Board.factory(puzzle)
         self.moves = [Move() for i in xrange(82)]
 
@@ -77,9 +72,6 @@ class Solver(object):
         This is called when a solution has been found. This routine displays the
         solution and sets the finished flag to unwind the backtrack recursion.
         """
-        self.board.display('SOLUTION')
-        if self.rating:
-            sys.stdout.write("\nRATING: %d\n" % self.iteration)
         self.finished = True
 
     def _construct_candidates(self, k):
@@ -102,7 +94,7 @@ class Solver(object):
         """
         next_x = 0
         next_y = 0
-        nconstraints = 0
+        nconstraints = -1
         for x in xrange(1, 10):
             for y in xrange(1, 10):
                 if self.board.m[x][y] != 0:
@@ -127,20 +119,10 @@ class Solver(object):
         """
         Assign the current move to the Sudoku board.
         """
-        if self.verbose:
-            sys.stdout.write("try: iteration: %d, k: %d, x: %d, y: %d, "
-                             "value: %d\n"
-                             % (self.iteration, k, self.moves[k].x,
-                                self.moves[k].y, self.moves[k].val))
         self.board.set(self.moves[k].x, self.moves[k].y, self.moves[k].val)
 
     def _unmake_move(self, k):
         """
         Undo the current move.
         """
-        if self.verbose:
-            sys.stdout.write("undo: iteration: %d, k: %d, x: %d, y: %d, "
-                             "value: %d\n"
-                             % (self.iteration, k, self.moves[k].x,
-                                self.moves[k].y, self.moves[k].val))
         self.board.unset(self.moves[k].x, self.moves[k].y, self.moves[k].val)

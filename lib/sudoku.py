@@ -4,6 +4,8 @@ lib.sudoku
 CLI for the sudoku script. This module defines the following command line
 syntax:
 
+    usage: sudoku [-h] [-t] [puzzle]
+
     Sudoku puzzle solver.
 
     positional arguments:
@@ -11,9 +13,7 @@ syntax:
 
     optional arguments:
       -h, --help       show this help message and exit
-      -r, --rating     provide difficulty rating of puzzle
       -t, --traceback  display call stack when exceptions are raised
-      -v, --verbose    run in verbose mode, show solution progress
 
 The lib.solver.Solver class is loaded and the backtrack method is called to
 solve the puzzle in the input file.
@@ -22,18 +22,22 @@ solve the puzzle in the input file.
 # system imports
 import argparse
 import sys
+import curses
 
 # project imports
 from lib.solver import Solver
+from lib.display import Display
 
 
 def main(argv=sys.argv):
     try:
         args = _parse_cmdline(argv)
         try:
-            solver = Solver(args.puzzle, verbose=args.verbose,
-                            rating=args.rating)
-            solver.backtrack(0)
+            stdscr, curs_mode = _start_curses()
+            try:
+                _loop(stdscr, args.puzzle)
+            finally:
+                _end_curses(curs_mode)
         finally:
             _close_args(args)
     except SystemExit, e:
@@ -50,15 +54,42 @@ def main(argv=sys.argv):
 
 def _parse_cmdline(argv):
     parser = argparse.ArgumentParser(description="Sudoku puzzle solver.")
-    parser.add_argument('-r', '--rating', action='store_true',
-                        help="provide difficulty rating of puzzle")
     parser.add_argument('-t', '--traceback', action='store_true',
                         help="display call stack when exceptions are raised")
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help="run in verbose mode, show solution progress")
-    parser.add_argument('puzzle', type=argparse.FileType('r'), help="puzzle file")
+    parser.add_argument('puzzle', type=argparse.FileType('r'), nargs='?',
+                        default=None, help="puzzle file")
     return parser.parse_args(argv[1:])
 
 
 def _close_args(args):
-    args.puzzle.close()
+    if args.puzzle:
+        args.puzzle.close()
+
+
+def _start_curses():
+    stdscr = curses.initscr()
+    curses.noecho()
+    curses.cbreak()
+    curs_mode = curses.curs_set(0)
+    return stdscr, curs_mode
+
+
+def _end_curses(curs_mode):
+    curses.curs_set(curs_mode)
+    curses.nocbreak()
+    curses.echo()
+    curses.endwin()
+
+
+def _loop(stdscr, puzzle):
+    Display.draw_screen(stdscr)
+    solver = Solver(puzzle)
+    _prompt(stdscr, "press any key to continue")
+    solver.backtrack(0)
+    _prompt(stdscr, "%d iterations, press any key to exit" % solver.iteration)
+
+
+def _prompt(stdscr, msg):
+    stdscr.addstr(Display.height, 0, msg)
+    stdscr.getch()
+    stdscr.addstr(Display.height, 0, ' ' * len(msg))

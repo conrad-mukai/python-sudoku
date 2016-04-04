@@ -4,8 +4,10 @@ Board class definition.
 """
 
 # system imports
-import sys
 import re
+
+# project imports
+from lib.display import Display
 
 
 class Board(object):
@@ -24,24 +26,25 @@ class Board(object):
         """
         Factory method to create a Board object from a puzzle file.
         """
-        rowregex = re.compile(r'([1-9 ])' * 9 + r'$')
         board = cls()
-        i = 1
-        for row in puzzle:
-            if i > 9:
-                raise SyntaxError("too many rows")
-            m = rowregex.match(row)
-            if not m:
-                raise SyntaxError("invalid row: %s" % row)
-            for j in xrange(1, 10):
-                v = m.group(j)
-                if v == ' ':
-                    continue
-                board.set(i, j, int(v), check=True)
-            i += 1
-        if i < 10:
-            raise SyntaxError("not enough rows")
-        board.display('PUZZLE')
+        rowregex = re.compile(r'([1-9 ])' * 9 + r'$')
+        if puzzle:
+            i = 1
+            for row in puzzle:
+                if i > 9:
+                    raise SyntaxError("too many rows")
+                m = rowregex.match(row)
+                if not m:
+                    raise SyntaxError("invalid row: %s" % row)
+                for j in xrange(1, 10):
+                    v = m.group(j)
+                    if v == ' ':
+                        continue
+                    board.set(i, j, int(v), loading=True)
+                i += 1
+            if i < 10:
+                raise SyntaxError("not enough rows")
+        board.refresh()
         return board
 
     def __init__(self):
@@ -53,20 +56,22 @@ class Board(object):
           4. colsets: group of sets for values in each column.
           5. secsets: group of sets for values in each sector.
         """
+        self.display = Display()
         self.m = [[0]*10 for i in xrange(10)]
         self.freecount = 81
         self.rowsets = [set() for i in xrange(10)]
         self.colsets = [set() for i in xrange(10)]
         self.secsets = [set() for i in xrange(10)]
 
-    def set(self, x, y, val, check=False):
+    def set(self, x, y, val, loading=False):
         """
-        Set a cell. The check flag is True when loading values from the puzzle
-        file.
+        Set a cell. The loading flag is True when reading values from the puzzle
+        file. It checks the inputs and disables refresh in the display. It also
+        forces values to be displayed in bold.
         """
         assert 1 <= x and x <= 9 and 1 <= y and y <= 9 and self.freecount > 0 \
                and 1 <= val and val <= 9 and self.m[x][y] == 0
-        if check:
+        if loading:
             if val in self.rowsets[x]:
                 raise RuntimeError("duplicate %d in row %d, found in column "
                                    "%d" % (val, x, y))
@@ -82,6 +87,7 @@ class Board(object):
         self.rowsets[x].add(val) 
         self.colsets[y].add(val)
         self.secsets[self._rowcol_to_sector(x, y)].add(val)
+        self.display.set(x, y, val, loading=loading)
 
     def unset(self, x, y, val):
         """
@@ -94,6 +100,7 @@ class Board(object):
         self.rowsets[x].remove(val)
         self.colsets[y].remove(val)
         self.secsets[self._rowcol_to_sector(x, y)].remove(val)
+        self.display.set(x, y, 0)
 
     def get_num_constraints(self, x, y):
         """
@@ -130,31 +137,5 @@ class Board(object):
     def _rowcol_to_sector(x, y):
         return 3 * ((x - 1) / 3) + (y - 1) / 3 + 1
 
-    def display(self, label):
-        """
-        Display the contents of the Sudoku board.
-        """
-        sys.stdout.write("\n%s:\n" % label)
-        self._horiz_line()
-        self._sector_row(1)
-        self._horiz_line()
-        self._sector_row(2)
-        self._horiz_line()
-        self._sector_row(3)
-        self._horiz_line()
-
-    @staticmethod
-    def _horiz_line():
-        sys.stdout.write('-' * 25 + '\n')
-
-    def _sector_row(self, s):
-        for i in xrange(3*(s-1)+1, 3*s+1):
-            self._row(i)
-
-    def _row(self, i):
-        sys.stdout.write('| ' + ' '.join(self._subrow(i, 1, 3))
-                         + ' | ' + ' '.join(self._subrow(i, 4, 6))
-                         + ' | ' + ' '.join(self._subrow(i, 7, 9)) + ' |\n')
-
-    def _subrow(self, i, j1, j2):
-        return [v==0 and ' ' or str(v) for v in self.m[i][j1:j2+1]]
+    def refresh(self):
+        self.display.refresh()
