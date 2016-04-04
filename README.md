@@ -3,9 +3,12 @@ sudoku
 
 Python program that solves sudoku puzzles.
 
-The program takes a single argument which is a puzzle file. The file is
-simply 9 lines of 9 characters, representing a Sudoku puzzle. Each character
-is either a number from 1 through 9, or a space. For example:
+The program takes an optional single argument which is a puzzle file. The file
+is simply 9 lines of 9 characters, representing a Sudoku puzzle. Each character
+is either a number from 1 through 9, or a space. If no file is specified the
+program starts with an empty grid.
+
+An example of a puzzle file is:
 
      3   6 12
     4  1 9  3
@@ -34,8 +37,10 @@ When this file is passed to the sudoku program it shows the following:
     └───────┴───────┴───────┘
     press any key to continue
 
-After pressing a key you will see the program modifying the puzzle until a
-solution is found:
+After pressing a key the program will begin solving the puzzle. If the program
+is running in slow mode (the -s option) you will see the program modifying the
+puzzle until a solution is found. If the program is not in slow mode it will
+just display the solution.
 
     ┌───────┬───────┬───────┐
     │ 7 3 9 │ 4 8 6 │ 5 1 2 │
@@ -52,12 +57,12 @@ solution is found:
     └───────┴───────┴───────┘
     51 iterations, press any key to exit
 
-It will show how many iterations were required to solve the puzzle. Pressing a
-key will exit the program.
+Whe a solution is found the number of iterations required to solve the puzzle
+is shown. Pressing a key will exit the program.
 
 The command line syntax for the program is:
 
-    usage: sudoku [-h] [-t] [puzzle]
+    usage: sudoku [-h] [-s] [-t] [puzzle]
 
     Sudoku puzzle solver.
 
@@ -66,4 +71,5 @@ The command line syntax for the program is:
 
     optional arguments:
       -h, --help       show this help message and exit
+      -s, --slow       slow mode: show puzzle being solved
       -t, --traceback  display call stack when exceptions are raised

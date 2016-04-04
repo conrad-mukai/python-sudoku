@@ -35,7 +35,7 @@ def main(argv=sys.argv):
         try:
             stdscr, curs_mode = _start_curses()
             try:
-                _loop(stdscr, args.puzzle)
+                _loop(stdscr, args.puzzle, args.slow)
             finally:
                 _end_curses(curs_mode)
         finally:
@@ -54,6 +54,8 @@ def main(argv=sys.argv):
 
 def _parse_cmdline(argv):
     parser = argparse.ArgumentParser(description="Sudoku puzzle solver.")
+    parser.add_argument('-s', '--slow', action='store_true',
+                        help="slow mode: show puzzle being solved")
     parser.add_argument('-t', '--traceback', action='store_true',
                         help="display call stack when exceptions are raised")
     parser.add_argument('puzzle', type=argparse.FileType('r'), nargs='?',
@@ -81,9 +83,9 @@ def _end_curses(curs_mode):
     curses.endwin()
 
 
-def _loop(stdscr, puzzle):
+def _loop(stdscr, puzzle, slow):
     Display.draw_screen(stdscr)
-    solver = Solver(puzzle)
+    solver = Solver(puzzle, slow)
     _prompt(stdscr, "press any key to continue")
     solver.backtrack(0)
     _prompt(stdscr, "%d iterations, press any key to exit" % solver.iteration)

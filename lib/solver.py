@@ -20,7 +20,7 @@ class Solver(object):
     Class that implements backtrack. See the backtrack method for details.
     """
 
-    def __init__(self, puzzle):
+    def __init__(self, puzzle, slow):
         """
         Constructor for the Solver class. The key members of this class are:
           finished: Flag to track if solution is found.
@@ -31,7 +31,8 @@ class Solver(object):
         """
         self.iteration = 0
         self.finished = False
-        self.board = Board.factory(puzzle)
+        self.slow = slow
+        self.board = Board.factory(puzzle, slow)
         self.moves = [Move() for i in xrange(82)]
 
     def backtrack(self, k):
@@ -73,6 +74,8 @@ class Solver(object):
         solution and sets the finished flag to unwind the backtrack recursion.
         """
         self.finished = True
+        if not self.slow:
+            self.board.refresh()
 
     def _construct_candidates(self, k):
         """

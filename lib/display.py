@@ -17,7 +17,8 @@ class Display(object):
     bheight = 3
     bwidth  = 7
 
-    def __init__(self):
+    def __init__(self, slow):
+        self.slow = slow
         self._convert(1, 1)
 
     def set(self, x, y, val, loading=False):
@@ -34,8 +35,9 @@ class Display(object):
             self.window.addch(self.x, self.y, ch, curses.A_BOLD)
         else:
             self.window.addch(self.x, self.y, ch)
-            self.window.refresh()
-            curses.napms(100)
+            if self.slow:
+                self.window.refresh()
+                curses.napms(100)
 
     def _convert(self, x, y):
         """

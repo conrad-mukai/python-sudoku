@@ -22,11 +22,11 @@ class Board(object):
     _all_values = set(xrange(1, 10))
 
     @classmethod
-    def factory(cls, puzzle):
+    def factory(cls, puzzle, slow):
         """
         Factory method to create a Board object from a puzzle file.
         """
-        board = cls()
+        board = cls(slow)
         rowregex = re.compile(r'([1-9 ])' * 9 + r'$')
         if puzzle:
             i = 1
@@ -47,7 +47,7 @@ class Board(object):
         board.refresh()
         return board
 
-    def __init__(self):
+    def __init__(self, slow):
         """
         Constructor for the Board class. The following members are created here:
           1. m: the Sudoku board.
@@ -56,7 +56,7 @@ class Board(object):
           4. colsets: group of sets for values in each column.
           5. secsets: group of sets for values in each sector.
         """
-        self.display = Display()
+        self.display = Display(slow)
         self.m = [[0]*10 for i in xrange(10)]
         self.freecount = 81
         self.rowsets = [set() for i in xrange(10)]
