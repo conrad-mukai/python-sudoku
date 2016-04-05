@@ -6,6 +6,9 @@ Curses based display class.
 # system imports
 import curses
 
+# project imports
+from debug import MockCurses, mock_curses
+
 
 class Display(object):
     """
@@ -50,11 +53,17 @@ class Display(object):
         self.window.refresh()
 
     @classmethod
-    def draw_screen(cls, stdscr):
+    def prompt(cls, msg):
+        cls.window.addstr(cls.height, 0, msg)
+        cls.window.getch()
+        cls.window.addstr(cls.height, 0, ' ' * len(msg))
+
+    @classmethod
+    def draw_screen(cls, debug):
         """
-        Display the Sudoku frame.
+        Initialize and display the Sudoku frame.
         """
-        cls.window = stdscr
+        cls._init(debug)
         for x in xrange(cls.height):
             if x == 0:
                 cls._draw_horizontal(x, curses.ACS_ULCORNER,
@@ -69,6 +78,28 @@ class Display(object):
                 cls._draw_horizontal(x, curses.ACS_VLINE, curses.ACS_VLINE,
                                      curses.ACS_VLINE, boundary=False)
         cls.window.refresh()
+
+    @classmethod
+    def _init(cls, debug):
+        cls.debug = debug
+        if cls.debug:
+            cls.window = MockCurses()
+            mock_curses()
+        else:
+            cls.window = curses.initscr()
+            curses.noecho()
+            curses.cbreak()
+            cls.curs_mode = curses.curs_set(0)
+
+    @classmethod
+    def close_screen(cls):
+        if cls.debug:
+            return
+        curses.curs_set(cls.curs_mode)
+        curses.nocbreak()
+        curses.echo()
+        curses.endwin()
+
 
     @classmethod
     def _draw_horizontal(cls, x, lchar, rchar, mchar, boundary=True):

@@ -63,7 +63,7 @@ class Board(object):
         self.colsets = [set() for i in xrange(10)]
         self.secsets = [set() for i in xrange(10)]
 
-    def set(self, x, y, val, loading=False):
+    def set(self, x, y, val, loading=False, display=True):
         """
         Set a cell. The loading flag is True when reading values from the puzzle
         file. It checks the inputs and disables refresh in the display. It also
@@ -87,9 +87,10 @@ class Board(object):
         self.rowsets[x].add(val) 
         self.colsets[y].add(val)
         self.secsets[self._rowcol_to_sector(x, y)].add(val)
-        self.display.set(x, y, val, loading=loading)
+        if display:
+            self.display.set(x, y, val, loading=loading)
 
-    def unset(self, x, y, val):
+    def unset(self, x, y, val, display=True):
         """
         Unset a cell.
         """
@@ -100,7 +101,8 @@ class Board(object):
         self.rowsets[x].remove(val)
         self.colsets[y].remove(val)
         self.secsets[self._rowcol_to_sector(x, y)].remove(val)
-        self.display.set(x, y, 0)
+        if display:
+            self.display.set(x, y, 0)
 
     def get_num_constraints(self, x, y):
         """
@@ -121,7 +123,7 @@ class Board(object):
         Test a value. Check that setting the value will have solutions in all
         remaining open cells.
         """
-        self.set(x, y, val)
+        self.set(x, y, val, display=False)
         try:
             for xx in xrange(1, 10):
                 for yy in xrange(1, 10):
@@ -130,7 +132,7 @@ class Board(object):
                     if len(self.get_possible_values(xx, yy)) == 0:
                         return False
         finally:
-            self.unset(x, y, val)
+            self.unset(x, y, val, display=False)
         return True
 
     @staticmethod
