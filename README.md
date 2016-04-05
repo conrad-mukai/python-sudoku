@@ -57,12 +57,12 @@ just display the solution.
     └───────┴───────┴───────┘
     51 iterations, press any key to exit
 
-Whe a solution is found the number of iterations required to solve the puzzle
+When a solution is found the number of iterations required to solve the puzzle
 is shown. Pressing a key will exit the program.
 
 The command line syntax for the program is:
 
-    usage: sudoku [-h] [-s] [-t] [puzzle]
+    usage: sudoku [-h] [-s] [-d] [-t] [puzzle]
 
     Sudoku puzzle solver.
 
@@ -72,4 +72,5 @@ The command line syntax for the program is:
     optional arguments:
       -h, --help       show this help message and exit
       -s, --slow       slow mode: show puzzle being solved
+      -d, --debug      don't use curses to run in a debugger
       -t, --traceback  display call stack when exceptions are raised
