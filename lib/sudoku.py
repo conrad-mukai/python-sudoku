@@ -1,22 +1,8 @@
 """
 lib.sudoku
 
-CLI for the sudoku script. This module defines the following command line
-syntax:
-
-    usage: sudoku [-h] [-t] [puzzle]
-
-    Sudoku puzzle solver.
-
-    positional arguments:
-      puzzle           puzzle file
-
-    optional arguments:
-      -h, --help       show this help message and exit
-      -t, --traceback  display call stack when exceptions are raised
-
-The lib.solver.Solver class is loaded and the backtrack method is called to
-solve the puzzle in the input file.
+CLI for the sudoku script. This module handles the command line options as well
+as the event loop.
 """
 
 # system imports
