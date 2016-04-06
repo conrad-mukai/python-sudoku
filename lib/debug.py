@@ -7,7 +7,7 @@ Mocks for curses calls. This is for running the script in the debugger.
 import curses
 
 
-class MockCurses(object):
+class _MockCurses(object):
 
     def addch(self, *args, **kwargs):
         pass
@@ -18,14 +18,15 @@ class MockCurses(object):
     def hline(self, *args, **kwargs):
         pass
 
-    def refresh(self):
+    def refresh(self, *args):
         pass
 
-    def getch(self):
+    def getch(self, *args):
         pass
 
 
 def mock_curses():
+    curses.wrapper = _mock_wrapper
     curses.napms = _mock_func
     curses.curs_set = _mock_func
     curses.nocbreak = _mock_func
@@ -42,6 +43,10 @@ def mock_curses():
     curses.ACS_RTEE = 0
     curses.ACS_PLUS = 0
     curses.ACS_VLINE = 0
+
+
+def _mock_wrapper(func, *args, **kwargs):
+    func(_MockCurses(), *args, **kwargs)
 
 
 def _mock_func(*args, **kwargs):

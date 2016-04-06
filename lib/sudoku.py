@@ -8,6 +8,7 @@ as the event loop.
 # system imports
 import argparse
 import sys
+import curses
 
 # project imports
 from lib.solver import Solver
@@ -18,11 +19,7 @@ def main(argv=sys.argv):
     try:
         args = _parse_cmdline(argv)
         try:
-            Display.draw_screen(args.debug)
-            try:
-                _loop(args.puzzle, args.slow)
-            finally:
-                Display.close_screen()
+            _solve(args.debug, args.puzzle, args.slow)
         finally:
             _close_args(args)
     except SystemExit, e:
@@ -55,8 +52,20 @@ def _close_args(args):
         args.puzzle.close()
 
 
-def _loop(puzzle, slow):
-    solver = Solver(puzzle, slow)
-    Display.prompt("press any key to continue")
-    solver.backtrack(0)
-    Display.prompt("%d iterations, press any key to exit" % solver.iteration)
+def _solve(debug, puzzle, slow):
+    if debug:
+        from debug import mock_curses
+        mock_curses()
+    curses.wrapper(_loop, puzzle, slow)
+
+
+def _loop(stdscr, puzzle, slow):
+    Display.draw_screen(stdscr)
+    try:
+        solver = Solver(puzzle, slow)
+        Display.prompt("press any key to continue")
+        solver.backtrack(0)
+        Display.prompt("%d iterations, press any key to exit"
+                       % solver.iteration)
+    finally:
+        Display.close_screen()

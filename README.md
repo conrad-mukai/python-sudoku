@@ -1,7 +1,10 @@
 sudoku
 ======
 
-Python program that solves sudoku puzzles.
+Python program that solves sudoku puzzles. This program is a demonstration of
+the backtracking algorithm:
+
+https://en.wikipedia.org/wiki/Sudoku_solving_algorithms
 
 The program takes an optional single argument which is a puzzle file. The file
 is simply 9 lines of 9 characters, representing a Sudoku puzzle. Each character

@@ -51,7 +51,6 @@ class Solver(object):
         if self._is_a_solution():
             self._process_solution()
         else:
-            self.iteration += 1
             k += 1
             candidates = self._construct_candidates(k)
             for val in candidates:
@@ -122,10 +121,12 @@ class Solver(object):
         """
         Assign the current move to the Sudoku board.
         """
+        self.iteration += 1
         self.board.set(self.moves[k].x, self.moves[k].y, self.moves[k].val)
 
     def _unmake_move(self, k):
         """
         Undo the current move.
         """
+        self.iteration += 1
         self.board.unset(self.moves[k].x, self.moves[k].y, self.moves[k].val)

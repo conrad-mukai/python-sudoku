@@ -13,9 +13,8 @@ This module loads the CLI defined by lib.sudoku.main and runs it.
 import sys
 import os
 
-os.sys.path.insert(0, os.path.normpath(os.path.join(os.path.dirname(__file__),
-                                                    os.pardir)))
-
+sys.path.insert(0, os.path.normpath(os.path.join(os.path.dirname(__file__),
+                                                 os.pardir)))
 
 from lib.sudoku import main
 
