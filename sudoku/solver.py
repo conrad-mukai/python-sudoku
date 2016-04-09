@@ -1,10 +1,10 @@
 """
-lib.solver
+sudoku.solver
 Solver class definition.
 """
 
 # project imports
-from lib.board import Board
+from sudoku.board import Board
 
 
 class Move(object):

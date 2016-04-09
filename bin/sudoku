@@ -6,7 +6,7 @@ Script for solving sudoku puzzles. This script uses the backtracking algorithm:
 
 https://en.wikipedia.org/wiki/Sudoku_solving_algorithms
 
-This module loads the CLI defined by lib.sudoku.main and runs it.
+This module loads the CLI defined by sudoku.cli.main and runs it.
 """
 
 # system imports
@@ -16,7 +16,7 @@ import os
 sys.path.insert(0, os.path.normpath(os.path.join(os.path.dirname(__file__),
                                                  os.pardir)))
 
-from lib.sudoku import main
+from sudoku.cli import main
 
 
 if __name__ == '__main__':

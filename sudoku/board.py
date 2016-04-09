@@ -1,5 +1,5 @@
 """
-lib.board
+sudoku.board
 Board class definition.
 """
 
@@ -7,7 +7,7 @@ Board class definition.
 import re
 
 # project imports
-from lib.display import Display
+from sudoku.display import Display
 
 
 class Board(object):

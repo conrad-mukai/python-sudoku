@@ -1,5 +1,5 @@
 """
-lib.display
+sudoku.display
 Curses based display class.
 """
 

@@ -1,5 +1,5 @@
 """
-lib.sudoku
+sudoku.cli
 
 CLI for the sudoku script. This module handles the command line options as well
 as the event loop.
@@ -11,8 +11,8 @@ import sys
 import curses
 
 # project imports
-from lib.solver import Solver
-from lib.display import Display
+from sudoku.solver import Solver
+from sudoku.display import Display
 
 
 def main(argv=sys.argv):
@@ -54,7 +54,7 @@ def _close_args(args):
 
 def _solve(debug, puzzle, slow):
     if debug:
-        from debug import mock_curses
+        from sudoku.debug import mock_curses
         mock_curses()
     curses.wrapper(_loop, puzzle, slow)
 

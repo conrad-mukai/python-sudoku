@@ -1,28 +1,10 @@
 """
-lib.debug
+sudoku.debug
 Mocks for curses calls. This is for running the script in the debugger.
 """
 
 # system imports
 import curses
-
-
-class _MockCurses(object):
-
-    def addch(self, *args, **kwargs):
-        pass
-
-    def addstr(self, *args, **kwargs):
-        pass
-
-    def hline(self, *args, **kwargs):
-        pass
-
-    def refresh(self, *args):
-        pass
-
-    def getch(self, *args):
-        pass
 
 
 def mock_curses():
@@ -47,6 +29,24 @@ def mock_curses():
 
 def _mock_wrapper(func, *args, **kwargs):
     func(_MockCurses(), *args, **kwargs)
+
+
+class _MockCurses(object):
+
+    def addch(self, *args, **kwargs):
+        pass
+
+    def addstr(self, *args, **kwargs):
+        pass
+
+    def hline(self, *args, **kwargs):
+        pass
+
+    def refresh(self, *args):
+        pass
+
+    def getch(self, *args):
+        pass
 
 
 def _mock_func(*args, **kwargs):
