@@ -29,20 +29,20 @@ class Board(object):
         board = cls(slow)
         rowregex = re.compile(r'([1-9 ])' * 9 + r'$')
         if puzzle:
-            i = 1
+            i = 0
             for row in puzzle:
-                if i > 9:
+                if i > 8:
                     raise SyntaxError("too many rows")
                 m = rowregex.match(row)
                 if not m:
                     raise SyntaxError("invalid row: %s" % row)
-                for j in xrange(1, 10):
-                    v = m.group(j)
+                for j in xrange(9):
+                    v = m.group(j+1)
                     if v == ' ':
                         continue
                     board.set(i, j, int(v), loading=True)
                 i += 1
-            if i < 10:
+            if i < 9:
                 raise SyntaxError("not enough rows")
         board.refresh()
         return board
@@ -57,11 +57,11 @@ class Board(object):
           5. secsets: group of sets for values in each sector.
         """
         self.display = Display(slow)
-        self.m = [[0]*10 for i in xrange(10)]
+        self.m = [[0]*9 for i in xrange(9)]
         self.freecount = 81
-        self.rowsets = [set() for i in xrange(10)]
-        self.colsets = [set() for i in xrange(10)]
-        self.secsets = [set() for i in xrange(10)]
+        self.rowsets = [set() for i in xrange(9)]
+        self.colsets = [set() for i in xrange(9)]
+        self.secsets = [set() for i in xrange(9)]
 
     def set(self, x, y, val, loading=False, display=True):
         """
@@ -69,19 +69,20 @@ class Board(object):
         file. It checks the inputs and disables refresh in the display. It also
         forces values to be displayed in bold.
         """
-        assert 1 <= x and x <= 9 and 1 <= y and y <= 9 and self.freecount > 0 \
+        assert 0 <= x and x < 9 and 0 <= y and y < 9 and self.freecount > 0 \
                and 1 <= val and val <= 9 and self.m[x][y] == 0
         if loading:
             if val in self.rowsets[x]:
                 raise RuntimeError("duplicate %d in row %d, found in column "
-                                   "%d" % (val, x, y))
+                                   "%d" % (val, x+1, y+1))
             if val in self.colsets[y]:
                 raise RuntimeError("duplicate %d in column %d, found in row "
-                                   "%d" % (val, y, x))
+                                   "%d" % (val, y+1, x+1))
             if val in self.secsets[self._rowcol_to_sector(x, y)]:
                 raise RuntimeError("duplicate %d in sector %d, found in row "
                                    "%d/column %d" %
-                                   (val, self._rowcol_to_sector(x, y), x, y))
+                                   (val, self._rowcol_to_sector(x, y)+1, x+1,
+                                    y+1))
         self.m[x][y] = val
         self.freecount -= 1
         self.rowsets[x].add(val) 
@@ -94,8 +95,8 @@ class Board(object):
         """
         Unset a cell.
         """
-        assert 1 <= x and x <= 9 and 1 <= y and y <= 9 \
-               and self.freecount <= 81 and self.m[x][y] == val
+        assert 0 <= x and x < 9 and 0 <= y and y < 9 \
+               and self.freecount < 81 and self.m[x][y] == val
         self.m[x][y] = 0
         self.freecount += 1
         self.rowsets[x].remove(val)
@@ -125,8 +126,8 @@ class Board(object):
         """
         self.set(x, y, val, display=False)
         try:
-            for xx in xrange(1, 10):
-                for yy in xrange(1, 10):
+            for xx in xrange(9):
+                for yy in xrange(9):
                     if self.m[xx][yy] != 0:
                         continue
                     if len(self.get_possible_values(xx, yy)) == 0:
@@ -137,7 +138,7 @@ class Board(object):
 
     @staticmethod
     def _rowcol_to_sector(x, y):
-        return 3 * ((x - 1) / 3) + (y - 1) / 3 + 1
+        return 3 * (x / 3) + y / 3
 
     def refresh(self):
         self.display.refresh()

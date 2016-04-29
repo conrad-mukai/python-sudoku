@@ -10,8 +10,8 @@ from sudoku.board import Board
 class Move(object):
 
     def __init__(self):
-        self.x = 0
-        self.y = 0
+        self.x = -1
+        self.y = -1
         self.val = 0
 
 
@@ -33,9 +33,9 @@ class Solver(object):
         self.finished = False
         self.slow = slow
         self.board = Board.factory(puzzle, slow)
-        self.moves = [Move() for i in xrange(82)]
+        self.moves = [Move() for i in xrange(81)]
 
-    def backtrack(self, k):
+    def backtrack(self, k=-1):
         """
         The backtrack algorithm. This is a recursive algorithm. The algorithm
         does the following:
@@ -82,7 +82,7 @@ class Solver(object):
         to the next move and return a list of possible values.
         """
         x, y = self._next_square()
-        if x == 0 and y == 0:
+        if x < 0 or y < 0:
             raise RuntimeError("no moves possible")
         self.moves[k].x = x
         self.moves[k].y = y
@@ -94,11 +94,11 @@ class Solver(object):
         returned is one with no assigned value and the least number of possible
         values (maximum number of constraints).
         """
-        next_x = 0
-        next_y = 0
+        next_x = -1
+        next_y = -1
         nconstraints = -1
-        for x in xrange(1, 10):
-            for y in xrange(1, 10):
+        for x in xrange(9):
+            for y in xrange(9):
                 if self.board.m[x][y] != 0:
                     continue
                 xy_constraints = self.board.get_num_constraints(x, y)

@@ -43,8 +43,8 @@ class Display(object):
         """
         Convert from board coordinates to display coordinates.
         """
-        self.x = x + (x - 1) / 3
-        self.y = 2 * y + 2 * ((y - 1) / 3)
+        self.x = x + x / 3 + 1
+        self.y = 2 * (y + y / 3) + 2
 
     def refresh(self):
         self.window.refresh()

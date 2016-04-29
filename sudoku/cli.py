@@ -64,7 +64,7 @@ def _loop(stdscr, puzzle, slow):
     try:
         solver = Solver(puzzle, slow)
         Display.prompt("press any key to continue")
-        solver.backtrack(0)
+        solver.backtrack()
         Display.prompt("%d iterations, press any key to exit"
                        % solver.iteration)
     finally:
